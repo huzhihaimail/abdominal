@@ -50,25 +50,39 @@ public class UserCtl {
     @RequestMapping("/list")
     public Result index(@RequestParam Map<String, Object> params, Integer pageNumber, Integer pageSize) {
         Query queryParam = new Query(params);
-        PageInfo<SysUser> result = sysUserService.queryList(queryParam, pageNumber, pageSize);
+        PageInfo<SysUser> result=null;
+        try {
+            result = sysUserService.queryList(queryParam, pageNumber, pageSize);
+        } catch (Exception e) {
+            return Result.error(UserErrorCode.SYS_USER_LOAD_ROLES_ERROR_CODE,UserErrorCode.SYS_USER_LOAD_ROLES_ERROR_MESSAGE);
+        }
 
         return Result.success(result.getTotal(), result.getList());
     }
 
     /**
      * 根据id查询用户信息
-     *
      * @param id 用户ID
      * @return 用户实体
      */
     @RequestMapping("/{id}")
     public Result queryById(@PathVariable String id) {
-        SysUser user = new SysUser();
-        user.setId(Integer.valueOf(id));
-        SysUser model = sysUserService.queryUserInfo(user);
+        SysUser model =null;
+        try {
+            //校验参数
+            if (ObjectUtils.isEmpty(id)){
+                return Result.error(UserErrorCode.SYS_USER_PARMETER_ERROR_CODE, UserErrorCode.SYS_USER_PARMETER_ERROR_MESSAGE);
+            }
+            //查询信息
+            SysUser user = new SysUser();
+            user.setId(Integer.valueOf(id));
+            model = sysUserService.queryUserInfo(user);
 
-        if (ObjectUtils.isEmpty(model)) {
-            model = new SysUser();
+            if (ObjectUtils.isEmpty(model)) {
+                model = new SysUser();
+            }
+        } catch (Exception e) {
+            return Result.error(UserErrorCode.SYS_USER_LOAD_ROLES_ERROR_CODE,UserErrorCode.SYS_USER_LOAD_ROLES_ERROR_MESSAGE);
         }
 
         return Result.success().put("model", model);
@@ -86,13 +100,16 @@ public class UserCtl {
 
         try {
             // 校验参数
-            // TODO: 2018/3/14
+            if (ObjectUtils.isEmpty(sysUser)){
+                return Result.error("500", "用户信息不能为空");
+            }
             // 执行入库操作
             sysUserService.saveUser(sysUser);
         } catch (ApplicationException e) {
+            LOGGER.error(e.getMsg());
             return Result.error(UserErrorCode.SYS_USER_SAVE_APP_ERROR_CODE, UserErrorCode.SYS_USER_SAVE_APP_ERROR_MESSAGE);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return Result.error(UserErrorCode.SYS_USER_SAVE_ERROR_CODE, UserErrorCode.SYS_USER_SAVE_ERROR_MESSAGE);
         }
 
@@ -110,13 +127,21 @@ public class UserCtl {
 
         try {
             // 校验参数
-            // TODO: 2018/3/14
+            if (ObjectUtils.isEmpty(sysUser)){
+                return Result.error("500", "用户信息不能为空");
+            }
+            if (ObjectUtils.isEmpty(sysUser.getId())){
+                return Result.error("500", "用户id不能为空");
+            }
 
             // 执行修改
-            sysUserService.update(sysUser);
+            sysUserService.updateUser(sysUser);
+
         } catch (RuntimeException e) {
+            LOGGER.error(e.getMessage());
             return Result.error(UserErrorCode.SYS_USER_UPDATE_APP_ERROR_CODE, UserErrorCode.SYS_USER_UPDATE_APP_ERROR_MESSAGE);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Result.error(UserErrorCode.SYS_USER_UPDATE_ERROR_CODE, UserErrorCode.SYS_USER_UPDATE_ERROR_MESSAGE);
         }
 
@@ -133,11 +158,15 @@ public class UserCtl {
     public Result deleteByIds(@RequestBody List<String> ids) {
 
         try {
-            // 校验参数 todo
-            sysUserService.deleteByIds(ids);
+            if (ObjectUtils.isEmpty(ids)){
+                return Result.error("500", "id不能为空");
+            }
+            sysUserService.deleteUser(ids);
         } catch (ApplicationException e) {
+            LOGGER.error(e.getMsg());
             return Result.error(e.getCode(), e.getMsg());
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Result.error(e.getMessage());
         }
 
@@ -153,15 +182,12 @@ public class UserCtl {
     public Result loadRoles() {
 
         try {
-            // 校验参数
-
             // 获取登用户名
             String loginUserName = ShiroUtil.getLoginUserName();
 
             if (StringUtils.isEmpty(loginUserName)) {
                 return Result.error(UserErrorCode.SYS_USER_LOAD_ROLES_APP_ERROR_CODE, UserErrorCode.SYS_USER_LOAD_ROLES_APP_ERROR_MESSAGE);
             }
-
 
             // 设置查询参数
             Map<String, Object> params = new HashMap<>();
@@ -172,8 +198,10 @@ public class UserCtl {
             List<SysRole> rolesLst = sysRoleService.loadRoles(query);
             return Result.success().put("page", rolesLst);
         } catch (RuntimeException e) {
+            LOGGER.error(e.getMessage());
             return Result.error(UserErrorCode.SYS_USER_LOAD_ROLES_APP_ERROR_CODE, UserErrorCode.SYS_USER_LOAD_ROLES_APP_ERROR_MESSAGE);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Result.error(UserErrorCode.SYS_USER_LOAD_ROLES_ERROR_CODE, UserErrorCode.SYS_USER_LOAD_ROLES_ERROR_MESSAGE);
         }
     }

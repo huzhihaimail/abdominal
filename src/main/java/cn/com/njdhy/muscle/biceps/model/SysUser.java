@@ -11,8 +11,8 @@ import java.util.List;
  *
  * @author 胡志海
  */
-@Getter
 @Setter
+@Getter
 public class SysUser extends BaseModel {
 
     /**

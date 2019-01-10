@@ -2,8 +2,6 @@
 package cn.com.njdhy.muscle.biceps.dao;
 
 import cn.com.njdhy.muscle.biceps.model.SysQuartzJob;
-import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

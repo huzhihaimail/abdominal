@@ -2,6 +2,7 @@
 package cn.com.njdhy.muscle.biceps.service.sys;
 
 import cn.com.njdhy.muscle.biceps.dao.SysUserDao;
+import cn.com.njdhy.muscle.biceps.dao.SysUserRoleDao;
 import cn.com.njdhy.muscle.biceps.model.SysUser;
 import cn.com.njdhy.muscle.biceps.model.SysUserRole;
 import cn.com.njdhy.muscle.biceps.service.BaseServiceImpl;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUser> imp
 
     @Autowired
     private SysUserRoleService sysUserRoleService;
+
+    @Resource
+    private SysUserRoleDao sysUserRoleDao;
 
     /**
      * 插入用户
@@ -50,7 +55,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUser> imp
 
         for (String roleId : roles) {
             SysUserRole sysUserRole = new SysUserRole();
-            sysUserRole.setUserId(userId);
+            sysUserRole.setUserId(sysUser.getId());
             sysUserRole.setRoleId(roleId);
             sysUserRolesLst.add(sysUserRole);
         }
@@ -71,10 +76,55 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserDao, SysUser> imp
         // 查询用户信息
         SysUser user = this.dao.queryById(String.valueOf(sysUser.getId()));
         // 查询用户的角色信息
-        SysUserRole userRole = sysUserRoleService.queryById(String.valueOf(sysUser.getId()));
-        user.setRoleId(userRole.getRoleId());
+        List<SysUserRole> roleList = sysUserRoleService.queryRoleList(String.valueOf(sysUser.getId()));
+        List<String> list = new ArrayList<>();
+        for (SysUserRole role : roleList){
+            list.add(role.getRoleId());
+        }
+        user.setUserRoles(list);
 
         return user;
+    }
+
+    /**
+     * 修改用户
+     * @param sysUser
+     */
+    @Override
+    public void updateUser(SysUser sysUser) {
+        //修改用户
+        dao.update(sysUser);
+        //删除用户角色关联表
+        sysUserRoleDao.deleteByUserId(String.valueOf(sysUser.getId()));
+        //重新增加用户角色关联表
+        List<SysUserRole> sysUserRolesLst = new ArrayList<>();
+        // 获取角色信息
+        List<String> roles = sysUser.getUserRoles();
+
+        for (String roleId : roles) {
+            SysUserRole sysUserRole = new SysUserRole();
+            sysUserRole.setUserId(sysUser.getId());
+            sysUserRole.setRoleId(roleId);
+            sysUserRolesLst.add(sysUserRole);
+        }
+
+        // 用户配置角色信息入库
+        sysUserRoleService.batchInsert(sysUserRolesLst);
+    }
+
+    /**
+     * 删除用户
+     * @param ids
+     */
+    @Transactional
+    @Override
+    public void deleteUser(List<String> ids) {
+        //删除用户
+        dao.deleteByIds(ids);
+        //删除用户角色关联信息
+        for (String id:ids){
+            sysUserRoleDao.deleteByUserId(id);
+        }
     }
 
 

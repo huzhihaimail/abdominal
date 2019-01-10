@@ -117,6 +117,8 @@ var vm = new Vue({
             vm.title = PAGE_INSERT_TITLE;
             // 3. 清空表单数据
             vm.model = {};
+            // 清空角色数据
+            vm.userRoles = [];
 
             // 4. 加载角色列表
             vm.loadRoles();
@@ -127,12 +129,12 @@ var vm = new Vue({
 
             // 判断用户
             if (!vm.model.userName || vm.model.userName.trim() == "") {
-                vm.errorMessage = "请输入用户名。";
+                vm.errorMessage = "请输入用户名称";
                 return;
             }
 
             if (vm.model.userName.trim().length <= 0 || vm.model.userName.trim().length > 10) {
-                vm.errorMessage = "用户名长度不能超过10个字符。";
+                vm.errorMessage = "用户名称长度不能超过10个字符。";
                 return;
             }
 
@@ -142,8 +144,8 @@ var vm = new Vue({
                 return;
             }
 
-            if (vm.model.nickName.trim().length <= 0 || vm.model.nickName.trim().length > 10) {
-                vm.errorMessage = "长度不能超过10个字符。";
+            if (vm.model.nickName.trim().length <= 0 || vm.model.nickName.trim().length > 20) {
+                vm.errorMessage = "长度不能超过20个字符。";
                 return;
             }
 
@@ -153,28 +155,16 @@ var vm = new Vue({
                 return;
             }
 
-            if (vm.model.password.trim().length < 6 || vm.model.password.trim().length > 16) {
-                vm.errorMessage = "密码长度不能小于6位大于16位";
-                return;
-            }
+            // 新增判断密码
+            if (vm.model.id == null) {
+                if (vm.model.password.trim().length < 6 || vm.model.password.trim().length > 16) {
+                    vm.errorMessage = "密码长度不能小于6位大于16位";
+                    return;
+                }
 
-            //确认密码
-            if (vm.model.newPassword.trim() != vm.model.password.trim()) {
-                vm.errorMessage = "两次密码必须保持一致";
-                return;
-            }
-
-            //电子邮箱
-            if (!vm.model.email || vm.model.email.trim() == "") {
-                vm.errorMessage = "请输入邮箱";
-                return;
-            } else {
-                // 定义校验规则
-                var regEmail = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/;
-                var flag = regEmail.test(vm.model.email.trim());
-                // 规则校验：不符合规则则给出提示
-                if (!flag) {
-                    vm.errorMessage = "请输入正确的邮箱";
+                //确认密码
+                if (vm.model.newPassword.trim() != vm.model.password.trim()) {
+                    vm.errorMessage = "两次密码必须保持一致";
                     return;
                 }
             }
@@ -183,7 +173,7 @@ var vm = new Vue({
             if (!vm.model.mobile || vm.model.mobile.trim() == "") {
                 vm.errorMessage = "请输入手机号码";
                 return;
-            }else{
+            } else {
                 // 定义校验规则
                 var regPhone = /^1[3|4|5|6|7|8|9]\d{9}$/;
                 var flag = regPhone.test(vm.model.mobile.trim());
@@ -192,6 +182,12 @@ var vm = new Vue({
                     vm.errorMessage = "请正确填写手机号码";
                     return;
                 }
+            }
+
+            // 角色
+            if (vm.userRoles == null || vm.userRoles == "") {
+                vm.errorMessage = "请选择角色";
+                return;
             }
 
             // 执行新增操作
@@ -239,26 +235,29 @@ var vm = new Vue({
 
             // 获取所选择选择数据行的ID（可能选择多行）
             var ids = bsTable.getMultiRowIds();
-
+            vm.userRoles = [];
             // 校验只能选择一行
             if (ids.length != 1) {
                 alert(PAGE_SELECT_ONE);
                 return;
             }
 
+            // 加载角色列表
+            vm.loadRoles();
+            $.ajaxSettings.async = false;
             $.get(APP_NAME + vm.moduleName + "/" + ids[0], function (r) {
                 vm.show = false;
                 vm.title = PAGE_UPDATE_TITLE;
                 vm.model = r.model;
+                vm.userRoles = vm.model.userRoles;
+                $.ajaxSettings.async = true;
             });
-            // 加载角色列表
-            vm.loadRoles();
 
         }
 
         // 执行修改操作
         , doUpdate: function () {
-
+            vm.model.userRoles = vm.userRoles;
             // 执行修改
             $.ajax({
                 type: "POST",
@@ -284,7 +283,6 @@ var vm = new Vue({
 
             // 获取选择记录ID
             var ids = bsTable.getMultiRowIds();
-
             // 校验未选择任何一行
             if (ids == null || ids.length <= 0) {
                 alert(PAGE_SELECT_ONE);
@@ -327,11 +325,21 @@ var vm = new Vue({
 
         // 加载角色列表
         , loadRoles: function () {
-            $.get(APP_NAME + vm.moduleName + "/loadRoles", function (r) {
-                vm.roles = r.page;
+            $.ajax({
+                type: "GET",
+                url: APP_NAME + vm.moduleName + "/loadRoles",
+                contentType: "application/json",
+                success: function (r) {
+                    if (r.code == 0) {
+                        vm.roles = r.page;
+                    } else if (r.code) {
+                        alert(r.msg);
+                    } else {
+                        alert(r.msg);
+                    }
+                }
             });
         }
-
     }
 });
 
@@ -343,7 +351,6 @@ $(function () {
     // 创建BootStrapTable
     bsTable.createBootStrapTable(vm.columns, APP_NAME + vm.moduleName + "/list?rnd=" + Math.random(), vm.queryOption)
 });
-
 
 
 

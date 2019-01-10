@@ -23,7 +23,7 @@ var showColumns = [
     }
     , {
         field: "nameCn",
-        title: "角色名称",
+        title: "角色中文名称",
         width: "10%",
     }
     // , {
@@ -54,7 +54,7 @@ var showColumns = [
             return new moment(value).format('YYYY-MM-DD HH:mm:ss');
         }
     }
-    /*, {
+    /*, {menu/queryAllMenuInsert
         field: "operate",
         title: "操作",
         width: "15%",
@@ -73,10 +73,21 @@ var bsTable = new BootStrapTable();
 
 var setting = {
     view: {
-        selectedMulti: false
+        selectedMulti: false,
+        showIcon: true
     },
     check: {
-        enable: true
+        enable: true,
+        //样式设置为checkbox 复选框 也可以设置为单选框 radioButton
+        chkStyle:'checkbox',
+        //Y-勾选节点
+        //N-取消勾选
+        //p-parent 是否关联父节点
+        //s-sun 是否关联子节点
+        chkboxType:{
+            'Y':'ps',
+            'N':'s'
+        }
     },
     data: {
         simpleData: {
@@ -115,6 +126,8 @@ var vm = new Vue({
 
         // 定义模块名称
         , moduleName: "role"
+        // ztree的JSON树
+        , menuJSON: {}
 
     }
     // 定义方法
@@ -138,23 +151,21 @@ var vm = new Vue({
                 menuIdList: new Array()
             };
 
-            //5.加载树控件
+            //4.加载树控件
+            // vm.loadTree('menuTree', 'add');
             vm.loadTreeMenu('add');
-
         }
 
         // 点击“确定”按钮
         , commit: function (el) {
 
             // 校验表单
-            if (vm.model.name.trim() == null || vm.model.name.trim() == "") {
+            if (!vm.model.name || vm.model.name.trim() == "") {
                 vm.errorMessage = "请输入角色名";
                 return;
-            }else{
-                //TODO去重
             }
             // 角色中文名
-            if (vm.model.nameCn.trim() == null || vm.model.nameCn.trim() == "") {
+            if (!vm.model.nameCn|| vm.model.nameCn.trim() == "") {
                 vm.errorMessage = "请输入角色中文名";
                 return;
             }
@@ -233,6 +244,7 @@ var vm = new Vue({
             });
 
             //5.加载树控件
+            // vm.loadTree('menuTree', 'update');
             vm.loadTreeMenu('update');
         }
 
@@ -316,13 +328,6 @@ var vm = new Vue({
             // 刷新表格数据
             bsTable.createBootStrapTable(showColumns, APP_NAME + "/sys/" + vm.moduleName + "/list?rnd=" + Math.random(), vm.queryOption);
         }
-
-        // 加载角色列表
-        , loadRoles: function () {
-            $.get(APP_NAME + "/sys/" + vm.moduleName + "/loadRoles", function (r) {
-                vm.roles = r.page;
-            });
-        }
         , loadTreeMenu: function (type) {
             function getMenuJson(url, data) {
                 var zNodes;
@@ -349,12 +354,59 @@ var vm = new Vue({
             } else if (type == 'update') {
                 var ids = bsTable.getMultiRowIds();
                 var data = ids[0];
-                /*ztree = $.fn.zTree.init($("#menuTree"), setting,getMenuJson(APP_NAME + "/sys/menu/queryAllMenuUpdate",data) );*/
                 ztree = $.fn.zTree.init($("#menuTree"), setting, getMenuJson(APP_NAME + "/sys/menu/queryAllMenuUpdate", data));
                 //展开所有节点
                 ztree.expandAll(true);
             }
 
+        }
+
+        // 获取ztree的JSON数据
+        , loadTree: function (id, type) {
+
+            if (type == 'add') {
+                // 加载menuJson
+                vm.getMenuJson();
+
+                ztree = $.fn.zTree.init($("#" + id), setting, vm.menuJSON);
+                ztree.expandAll(true);
+            } else if (type == 'update') {
+
+                var ids = bsTable.getMultiRowIds();
+                var selectedId = ids[0];
+                // 加载menuJson
+                vm.getMenuJsonById(selectedId);
+                vm.getMenuJson();
+                ztree = $.fn.zTree.init($("#" + id), setting, vm.menuJSON);
+                ztree.expandAll(true);
+            }
+
+        }
+
+        // 加载角色列表
+        , getMenuJson: function () {
+            $.ajax({
+                url: APP_NAME + "/sys/menu/queryAllMenus",
+                dataType: 'JSON',
+                type: 'POST',
+                async: false,
+                success: function (data, status) {
+                    var nodes = JSON.stringify(data);
+                    vm.menuJSON = eval(nodes);
+                }
+            });
+        }
+        , getMenuJsonById: function (id) {
+            $.ajax({
+                url: APP_NAME + "/sys/roleMenu/" + id,
+                dataType: 'JSON',
+                type: 'POST',
+                async: false,
+                success: function (data, status) {
+                    var nodes = JSON.stringify(data.model);
+                    vm.menuJSON = eval(nodes);
+                }
+            });
         }
 
     }

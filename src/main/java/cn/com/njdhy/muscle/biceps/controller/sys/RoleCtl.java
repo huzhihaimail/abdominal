@@ -49,8 +49,10 @@ public class RoleCtl {
             return Result.success(result.getTotal(), result.getList());
 
         } catch (RuntimeException e) {
+            LOGGER.error(e.getMessage());
             return Result.error(RoleErrorCode.SYS_ROLE_QUERY_APP_ERROR_CODE, RoleErrorCode.SYS_ROLE_QUERY_APP_ERROR_MESSAGE);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Result.error(RoleErrorCode.SYS_ROLE_QUERY_ERROR_CODE, RoleErrorCode.SYS_ROLE_QUERY_ERROR_MESSAGE);
         }
     }
@@ -63,11 +65,17 @@ public class RoleCtl {
      */
     @RequestMapping("/{id}")
     public Result queryById(@PathVariable String id) {
-
-        SysRole model = sysRoleService.queryById(id);
-
-        if (ObjectUtils.isEmpty(model)) {
-            model = new SysRole();
+        SysRole model=null;
+        try {
+            if (ObjectUtils.isEmpty(id)){
+                return Result.error("500", "参数不能为空");
+            }
+            model = sysRoleService.queryById(id);
+            if (ObjectUtils.isEmpty(model)) {
+                model = new SysRole();
+            }
+        } catch (Exception e) {
+            return Result.error(RoleErrorCode.SYS_ROLE_QUERY_ERROR_CODE,RoleErrorCode.SYS_ROLE_QUERY_ERROR_MESSAGE);
         }
 
         return Result.success().put("model", model);
@@ -84,13 +92,17 @@ public class RoleCtl {
     public Result insert(@RequestBody SysRole sysRole) {
 
         try {
-            // 校验参数 todo
-
+            // 校验参数
+            if (ObjectUtils.isEmpty(sysRole)){
+                return Result.error("500", "角色信息不能为空");
+            }
             // 执行入库操作
             sysRoleService.insertRoleInfo(sysRole);
         } catch (ApplicationException e) {
+            LOGGER.error(e.getMsg());
             return Result.error(RoleErrorCode.SYS_ROLE_SAVE_APP_ERROR_CODE, RoleErrorCode.SYS_ROLE_SAVE_APP_ERROR_MESSAGE);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Result.error(RoleErrorCode.SYS_ROLE_SAVE_ERROR_CODE, RoleErrorCode.SYS_ROLE_SAVE_ERROR_MESSAGE);
         }
 
@@ -108,13 +120,19 @@ public class RoleCtl {
 
         try {
             // 校验参数
-            // TODO: 2018/3/14
-
+            if (ObjectUtils.isEmpty(sysRole)){
+                return Result.error("500", "角色信息不能为空");
+            }
+            if (ObjectUtils.isEmpty(sysRole.getId())){
+                return Result.error("500", "角色id不能为空");
+            }
             // 执行修改
             sysRoleService.updateRoleInfo(sysRole);
         } catch (RuntimeException e) {
+            LOGGER.error(e.getMessage());
             return Result.error(RoleErrorCode.SYS_ROLE_QUERY_APP_ERROR_CODE, RoleErrorCode.SYS_ROLE_QUERY_APP_ERROR_MESSAGE);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Result.error(RoleErrorCode.SYS_ROLE_QUERY_ERROR_CODE, RoleErrorCode.SYS_ROLE_QUERY_ERROR_MESSAGE);
         }
 
@@ -131,11 +149,16 @@ public class RoleCtl {
     public Result deleteByIds(@RequestBody List<String> ids) {
 
         try {
-            // 校验参数 todo
+            // 校验参数
+            if (ObjectUtils.isEmpty(ids)){
+                return Result.error("500", "角色id不能为空");
+            }
             sysRoleService.deleteByIds(ids);
         } catch (ApplicationException e) {
+            LOGGER.error(e.getMsg());
             return Result.error(RoleErrorCode.SYS_ROLE_DELETE_APP_ERROR_CODE, RoleErrorCode.SYS_ROLE_DELETE_APP_ERROR_MESSAGE);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage());
             return Result.error(RoleErrorCode.SYS_ROLE_DELETE_ERROR_CODE, RoleErrorCode.SYS_ROLE_DELETE_ERROR_MESSAGE);
         }
 
