@@ -16,6 +16,11 @@ import java.util.List;
 public class SysUser extends BaseModel {
 
     /**
+     * 公司id
+     */
+    private Integer companyId;
+
+    /**
      * 用户名
      */
     private String userName;

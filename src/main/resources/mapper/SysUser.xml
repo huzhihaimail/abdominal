@@ -8,6 +8,7 @@
     <resultMap id="SysUserMap" type="SysUser">
         <!-- 配置实体和数据库列的对应关系，property：实体属性名；column：数据库表列名；-->
         <result property="id" column="id"></result>
+        <result property="companyId" column="company_id"></result>
         <result property="userName" column="user_name"></result>
         <result property="nickName" column="nick_name"></result>
         <result property="password" column="password"></result>
