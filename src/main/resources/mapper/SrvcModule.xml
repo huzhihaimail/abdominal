@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 配置dao接口路径-->
+<mapper namespace="cn.com.njdhy.muscle.biceps.dao.srvc.SrvcModuleDao">
+
+    <!-- type配置model层实体类名-->
+    <resultMap id="SrvcModuleMap" type="SrvcModule">
+        <!-- 配置实体和数据库列的对应关系，property：实体属性名；column：数据库表列名；-->
+        <result property="id" column="id"></result>
+        <result property="moduleName" column="module_name"></result>
+        <result property="moduleSubId" column="module_sub_id"></result>
+        <result property="moduleId" column="module_id"></result>
+        <result property="title" column="title"></result>
+        <result property="imageUrl" column="image_url"></result>
+        <result property="imageType" column="image_type"></result>
+
+        <result property="deleteFlag" column="delete_flag"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="updateDate" column="update_date"></result>
+    </resultMap>
+
+    <!-- 配置表名 -->
+    <sql id="tableName">
+        srvc_module
+    </sql>
+
+    <sql id="tableName2">
+        srvc_module_sub
+    </sql>
+
+    <!-- for insert columns -->
+    <sql id="columns">
+        id, module_name, create_date, update_date, delete_flag
+    </sql>
+
+    <!-- for insert value -->
+    <sql id="values">
+        #{id}, #{moduleName}, NOW(), NOW(), 0
+    </sql>
+
+    <!-- for update set -->
+    <sql id="updates">
+        module_name=#{moduleName}, update_date=NOW(), delete_flag=#{deleteFlag}
+    </sql>
+
+    <!-- 根据名称查询 -->
+    <select id="queryByName" resultMap="SrvcModuleMap" parameterType="String">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tableName"/>
+        t
+        WHERE 1=1
+        AND t.module_name=#{moduleName}
+
+    </select>
+
+    <!-- 根据ID查询-->
+    <select id="queryById" resultMap="SrvcModuleMap" parameterType="String">
+        SELECT
+        m.id module_id,m.module_name,s.id module_sub_id,s.title,s.image_url,s.image_type
+        FROM
+        <include refid="tableName"/> m
+        LEFT JOIN
+        <include refid="tableName2"/> s
+        ON m.id = s.module_id
+        WHERE 1 = 1
+        AND s.id=#{id}
+    </select>
+
+    <!-- 批量删除-->
+    <delete id="deleteByIds" parameterType="java.util.List">
+        DELETE s.* FROM
+        <include refid="tableName"/> m
+        LEFT JOIN
+        <include refid="tableName2"/> s
+        ON m.id = s.module_id
+        WHERE 1=1
+        AND s.id IN
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 新建  useGeneratedKeys="true" 用于返回新增后的id值-->
+    <insert id="insert" parameterType="SrvcModule" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="tableName"/>
+        (<include refid="columns"/>)
+        VALUES
+        (<include refid="values"/>)
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="SrvcModule">
+        UPDATE
+        <include refid="tableName"/>
+        SET
+        <include refid="updates"/>
+        WHERE 1=1
+        AND id = #{id}
+    </update>
+
+    <!-- 根据条件查询 -->
+    <select id="queryList" resultMap="SrvcModuleMap" parameterType="map">
+
+        SELECT
+        <include refid="columns"/>
+        FROM
+        (
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE 1=1
+        <if test="keyword!=null and keyword!=''">
+            AND module_name LIKE CONCAT('%',#{keyword},'%')
+        </if>
+        ORDER BY
+        create_date
+        DESC
+        ) t
+    </select>
+
+    <!--backend关联查询-->
+    <select id="selectModuleList" resultMap="SrvcModuleMap" parameterType="map">
+        SELECT
+        m.module_name,
+        s.id ,s.title,s.image_url,s.image_type,s.create_date,s.update_date
+        FROM
+        <include refid="tableName2"/> s
+        LEFT JOIN
+        <include refid="tableName"/> m
+        ON m.id = s.module_id
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                AND m.module_name LIKE CONCAT('%',#{keyword},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--api关联查询-->
+    <select id="selectModuleInfo" resultMap="SrvcModuleMap">
+        SELECT
+        m.*,
+        s.id module_sub_id,s.title,s.image_url,s.image_type
+        FROM
+        <include refid="tableName"/> m
+        LEFT JOIN
+        <include refid="tableName2"/> s
+        ON m.id = s.module_id
+        <where>
+            AND m.delete_flag = 0
+            AND m.module_name =#{moduleName}
+            AND s.image_type =#{imageType}
+        </where>
+    </select>
+</mapper>
+
