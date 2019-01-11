@@ -60,5 +60,9 @@ public class SrvcBuildingPlace extends BaseModel{
      */
     private String imageExplain;
 
+    /**
+     * 公司id
+     */
+    private int companyId;
 
 }

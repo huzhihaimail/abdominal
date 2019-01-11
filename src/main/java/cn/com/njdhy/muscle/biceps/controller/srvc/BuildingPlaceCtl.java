@@ -3,14 +3,13 @@ package cn.com.njdhy.muscle.biceps.controller.srvc;
 import cn.com.njdhy.muscle.biceps.controller.Query;
 import cn.com.njdhy.muscle.biceps.controller.Result;
 import cn.com.njdhy.muscle.biceps.exception.ApplicationException;
-import cn.com.njdhy.muscle.biceps.exception.srvc.BannerErrorCode;
 import cn.com.njdhy.muscle.biceps.exception.srvc.BuildingPlaceErrorCode;
-import cn.com.njdhy.muscle.biceps.exception.srvc.HousesSubErrorCode;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcBuildingPlace;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcPlaceImg;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcBuildingPlaceService;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcPlaceImgService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +47,7 @@ public class BuildingPlaceCtl {
     public Result banner(@RequestParam Map<String, Object> params, Integer pageNumber, Integer pageSize) {
         PageInfo<SrvcBuildingPlace> result=null;
         try {
+            params.put("companyId",ShiroUtil.getUserCompanyId());
             Query queryParam = new Query(params);
             result = srvcBuildingPlaceService.selectBuildingPlaceList(queryParam, pageNumber, pageSize);
             List<SrvcBuildingPlace> list = result.getList();
@@ -103,6 +103,7 @@ public class BuildingPlaceCtl {
         try {
 
             // 执行入库操作
+            srvcBuildingPlace.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcBuildingPlaceService.insert(srvcBuildingPlace);
             SrvcPlaceImg srvcPlaceImg = new SrvcPlaceImg();
             srvcPlaceImg.setPlaceId(srvcBuildingPlace.getId());
