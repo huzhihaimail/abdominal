@@ -22,4 +22,8 @@ public class SysCompanyServiceImpl extends BaseServiceImpl<SysCompanyDao,SysComp
     @Autowired
     private SysCompanyDao sysCompanyDao;
 
+    @Override
+    public List<SysCompany> selectAllCompany() {
+        return sysCompanyDao.selectAllCompany();
+    }
 }

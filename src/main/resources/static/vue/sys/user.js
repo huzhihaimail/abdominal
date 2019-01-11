@@ -15,6 +15,11 @@ var showColumns = [
         }
     }
     , {
+        field: "companyName",
+        title: "所属公司",
+        width: "10%"
+    }
+    , {
         field: "userName",
         title: "用户名称",
         width: "10%",
@@ -94,7 +99,8 @@ var vm = new Vue({
         , model: {} //实体对象(用于新建、修改页面)
         , roles: [] // 加载角色列表对象
         , userRoles: [] // 用户选择的角色
-
+        //查询出所有公司
+        , companys: {}
         // 定义模块名称
         , moduleName: "/sys/user"
     }
@@ -119,8 +125,9 @@ var vm = new Vue({
             vm.model = {};
             // 清空角色数据
             vm.userRoles = [];
-
-            // 4. 加载角色列表
+            // 4.查询所有公司
+            vm.queryCompanys();
+            // 5. 加载角色列表
             vm.loadRoles();
         }
 
@@ -252,6 +259,8 @@ var vm = new Vue({
                 vm.userRoles = vm.model.userRoles;
                 $.ajaxSettings.async = true;
             });
+            // 查询所有公司
+            vm.queryCompanys();
 
         }
 
@@ -336,6 +345,20 @@ var vm = new Vue({
                         alert(r.msg);
                     } else {
                         alert(r.msg);
+                    }
+                }
+            });
+        }
+        //查询所有公司
+        , queryCompanys: function () {
+            $.ajax({
+                type: "POST",
+                url: APP_NAME + "/sys/company/query",
+                contentType: "application/json",
+                data: JSON.stringify(vm.model),
+                success: function (r) {
+                    if (r.code == 0) {
+                        vm.companys = r.companys;
                     }
                 }
             });

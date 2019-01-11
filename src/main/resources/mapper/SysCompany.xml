@@ -36,7 +36,14 @@
     <sql id="updates">
         company_name=#{companyName}, logo=#{logo}, website=#{website}, introduce=#{introduce}, delete_flag=#{deleteFlag}, update_date=NOW()
     </sql>
-
+    <select id="selectAllCompany" resultMap="SysCompanyMap">
+      SELECT
+        id,
+        company_name
+      FROM
+        <include refid="tableName"/>
+      WHERE delete_flag=0
+    </select>
     <!-- 根据名称查询 -->
     <select id="queryByName" resultMap="SysCompanyMap" parameterType="String">
         SELECT

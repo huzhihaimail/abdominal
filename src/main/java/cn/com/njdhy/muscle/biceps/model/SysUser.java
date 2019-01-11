@@ -19,6 +19,10 @@ public class SysUser extends BaseModel {
      * 公司id
      */
     private Integer companyId;
+    /**
+     * 公司名称
+     */
+    private String companyName;
 
     /**
      * 用户名

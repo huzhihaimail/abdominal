@@ -166,4 +166,19 @@ public class CompanyCtl {
 
         return Result.success();
     }
+
+    /**
+     *  查询所有公司
+     * @return
+     */
+    @RequestMapping("/query")
+    public Result queryAllCompany() {
+        List<SysCompany> list=null;
+        try {
+             list = sysCompanyService.selectAllCompany();
+        } catch (Exception e) {
+            return Result.error(CompanyErrorCode.SYS_COMPANY_SELECT_ERROR_CODE,CompanyErrorCode.SYS_COMPANY_SELECT_ERROR_MESSAGE);
+        }
+        return Result.success().put("companys", list);
+    }
 }

@@ -9,6 +9,7 @@
         <!-- 配置实体和数据库列的对应关系，property：实体属性名；column：数据库表列名；-->
         <result property="id" column="id"></result>
         <result property="companyId" column="company_id"></result>
+        <result property="companyName" column="company_name"></result>
         <result property="userName" column="user_name"></result>
         <result property="nickName" column="nick_name"></result>
         <result property="password" column="password"></result>
@@ -25,20 +26,23 @@
     <sql id="tableName">
         sys_user
     </sql>
+    <sql id="tableName1">
+        sys_company
+    </sql>
 
     <!-- for insert columns -->
     <sql id="columns">
-        id, user_name, nick_name, mobile, password, salt, status, email, create_date, update_date, delete_flag
+        id, company_id, user_name, nick_name, mobile, password, salt, status, email, create_date, update_date, delete_flag
     </sql>
 
     <!-- for insert value -->
     <sql id="values">
-        #{id}, #{userName}, #{nickName}, #{mobile}, #{password}, #{salt}, 1, #{email}, NOW(), NOW(), 0
+        #{id}, #{companyId},#{userName}, #{nickName}, #{mobile}, #{password}, #{salt}, 1, #{email}, NOW(), NOW(), 0
     </sql>
 
     <!-- for update set -->
     <sql id="updates">
-        user_name=#{userName}, nick_name=#{nickName}, mobile=#{mobile}, `password`=#{password}, salt=#{salt}, status=#{status}, email=#{email}, delete_flag=#{deleteFlag}, update_date=NOW()
+        company_id=#{companyId},user_name=#{userName}, nick_name=#{nickName}, mobile=#{mobile}, `password`=#{password}, salt=#{salt}, status=#{status}, email=#{email}, delete_flag=#{deleteFlag}, update_date=NOW()
     </sql>
 
     <!-- 根据名称查询 -->
@@ -97,19 +101,23 @@
     <select id="queryList" resultMap="SysUserMap" parameterType="map">
 
         SELECT
-        <include refid="columns"/>
+        t.*
         FROM
         (
         SELECT
-        <include refid="columns"/>
+        u.*,cy.company_name
         FROM
-        <include refid="tableName"/>
+        <include refid="tableName"/> u
+        LEFT JOIN
+        <include refid="tableName1"/> cy
+        ON u.company_id = cy.id
         WHERE 1=1
         <if test="keyword!=null and keyword!=''">
-            AND user_name LIKE CONCAT('%',#{keyword},'%')
-            OR nick_name LIKE CONCAT('%',#{keyword},'%')
-            OR mobile LIKE CONCAT('%',#{keyword},'%')
-            OR email LIKE CONCAT('%',#{keyword},'%')
+            AND u.user_name LIKE CONCAT('%',#{keyword},'%')
+            OR u.nick_name LIKE CONCAT('%',#{keyword},'%')
+            OR u.mobile LIKE CONCAT('%',#{keyword},'%')
+            OR u.email LIKE CONCAT('%',#{keyword},'%')
+            OR cy.company_name LIKE CONCAT('%',#{keyword},'%')
         </if>
         ORDER BY
         <if test="sortName!=null and sorName!='' and sortOrder !=null and sortOrder!=''">
