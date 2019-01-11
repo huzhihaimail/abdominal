@@ -122,15 +122,15 @@ var vm = new Vue({
 
             // 校验参数
             if(!vm.model.companyName || vm.model.companyName.trim()==""){
-                vm.errorMessage="请输入公司名称"
+                vm.errorMessage="请输入公司名称";
                 return;
             }
             if (!vm.model.logo || vm.model.logo=="") {
-                vm.errorMessage="请上传公司logo"
+                vm.errorMessage="请上传公司logo";
                 return;
             }
             if (!vm.model.website || vm.model.website=="") {
-                vm.errorMessage="请填写公司域名"
+                vm.errorMessage="请填写公司域名";
                 return;
             }
             // 执行新增操作
