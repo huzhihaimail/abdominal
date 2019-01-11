@@ -21,5 +21,14 @@ public class ShiroUtil {
         return user.getUserName();
     }
 
+    /**
+     * 获取用户名
+     *
+     * @return 登陆用户名
+     */
+    public static SysUser getUser() {
+        SysUser user = (SysUser) SecurityUtils.getSubject().getPrincipal();
+        return user;
+    }
 
 }
