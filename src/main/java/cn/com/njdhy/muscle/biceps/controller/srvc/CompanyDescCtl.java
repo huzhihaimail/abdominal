@@ -3,11 +3,11 @@ package cn.com.njdhy.muscle.biceps.controller.srvc;
 import cn.com.njdhy.muscle.biceps.controller.Query;
 import cn.com.njdhy.muscle.biceps.controller.Result;
 import cn.com.njdhy.muscle.biceps.exception.ApplicationException;
-import cn.com.njdhy.muscle.biceps.exception.srvc.BuildingPlaceErrorCode;
 import cn.com.njdhy.muscle.biceps.exception.srvc.CompanyDescErrorCode;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcCompanyDesc;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcCompanyDescService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -43,6 +43,7 @@ public class CompanyDescCtl {
     public Result banner(@RequestParam Map<String, Object> params, Integer pageNumber, Integer pageSize) {
         PageInfo<SrvcCompanyDesc> result=null;
         try {
+            params.put("companyId",ShiroUtil.getUserCompanyId());
             Query queryParam = new Query(params);
             result = srvcCompanyDescService.queryList(queryParam, pageNumber, pageSize);
             List<SrvcCompanyDesc> list = result.getList();
@@ -99,6 +100,7 @@ public class CompanyDescCtl {
                 return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
+            srvcCompanyDesc.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcCompanyDescService.insert(srvcCompanyDesc);
         } catch (ApplicationException e) {
             e.printStackTrace();
