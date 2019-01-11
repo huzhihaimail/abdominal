@@ -9,6 +9,7 @@ import cn.com.njdhy.muscle.biceps.model.srvc.SrvcModuleSub;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcModuleService;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcModuleSubService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +48,7 @@ public class ModuleCtl {
     public Result banner(@RequestParam Map<String, Object> params, Integer pageNumber, Integer pageSize) {
         PageInfo<SrvcModule> result=null;
         try {
+            params.put("companyId",ShiroUtil.getUserCompanyId());
             Query queryParam = new Query(params);
             result = srvcModuleService.selectModuleList(queryParam, pageNumber, pageSize);
             List<SrvcModule> list = result.getList();
@@ -107,6 +109,7 @@ public class ModuleCtl {
             srvcModuleSub.setImageUrl(srvcModule.getImageUrl());
             srvcModuleSub.setImageType(srvcModule.getImageType());
             srvcModuleSub.setModuleId(srvcModule.getModuleId());
+            srvcModuleSub.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcModuleSubService.insert(srvcModuleSub);
         } catch (ApplicationException e) {
             e.printStackTrace();
