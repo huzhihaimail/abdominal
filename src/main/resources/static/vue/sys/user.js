@@ -15,11 +15,6 @@ var showColumns = [
         }
     }
     , {
-        field: "companyName",
-        title: "所属公司",
-        width: "10%"
-    }
-    , {
         field: "userName",
         title: "用户名称",
         width: "10%",
@@ -46,6 +41,11 @@ var showColumns = [
         width: "15%",
         sortable: true,
         sortName: "email"
+    }
+    , {
+        field: "companyName",
+        title: "所属公司",
+        width: "10%"
     }
     , {
         field: "createDate",
