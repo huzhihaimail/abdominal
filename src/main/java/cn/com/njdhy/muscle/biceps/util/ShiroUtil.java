@@ -22,13 +22,13 @@ public class ShiroUtil {
     }
 
     /**
-     * 获取用户名
+     * 获取用户公司id
      *
-     * @return 登陆用户名
+     * @return
      */
-    public static SysUser getUser() {
+    public static Integer getUserCompanyId() {
         SysUser user = (SysUser) SecurityUtils.getSubject().getPrincipal();
-        return user;
+        return user.getCompanyId();
     }
 
 }

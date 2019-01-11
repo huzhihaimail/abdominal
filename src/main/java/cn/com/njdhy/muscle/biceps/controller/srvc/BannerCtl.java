@@ -7,6 +7,7 @@ import cn.com.njdhy.muscle.biceps.exception.srvc.BannerErrorCode;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcBanner;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcBannerService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -43,6 +44,8 @@ public class BannerCtl {
         PageInfo<SrvcBanner> result=null;
         try {
             Query queryParam = new Query(params);
+
+            queryParam.put("companyId",ShiroUtil.getUserCompanyId());
             result = srvcBannerService.queryList(queryParam, pageNumber, pageSize);
             List<SrvcBanner> list = result.getList();
             for (SrvcBanner srvcBanner : list) {
@@ -109,6 +112,7 @@ public class BannerCtl {
                 return Result.error(BannerErrorCode.SRVC_BANNER_PARAMS_ERROR_CODE, BannerErrorCode.SRVC_BANNER_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
+            srvcBanner.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcBannerService.insert(srvcBanner);
         } catch (ApplicationException e) {
             e.printStackTrace();
