@@ -11,6 +11,7 @@
         <result property="title" column="title"></result>
         <result property="videoUrl" column="video_url"></result>
         <result property="videoLinkUrl" column="video_link_url"></result>
+        <result property="companyId" column="company_id"></result>
         <result property="deleteFlag" column="delete_flag"></result>
         <result property="createDate" column="create_date"></result>
         <result property="updateDate" column="update_date"></result>
@@ -23,12 +24,12 @@
 
     <!-- for insert columns -->
     <sql id="columns">
-        id, title, video_url, video_link_url, create_date, update_date, delete_flag
+        id, title, video_url, video_link_url, company_id, create_date, update_date, delete_flag
     </sql>
 
     <!-- for insert value -->
     <sql id="values">
-        #{id}, #{title}, #{videoUrl}, #{videoLinkUrl}, NOW(), NOW(), 0
+        #{id}, #{title}, #{videoUrl}, #{videoLinkUrl}, #{companyId}, NOW(), NOW(), 0
     </sql>
 
     <!-- for update set -->
@@ -45,7 +46,9 @@
         t
         WHERE 1=1
         AND t.title=#{title}
-
+        <if test="companyId!=null">
+            AND company_id = #{companyId}
+        </if>
     </select>
 
     <!-- 根据ID查询-->
@@ -102,6 +105,9 @@
         WHERE 1=1
         <if test="keyword!=null and keyword!=''">
             AND title LIKE CONCAT('%',#{keyword},'%')
+        </if>
+        <if test="companyId!=null">
+            AND company_id = #{companyId}
         </if>
         ORDER BY
         create_date
