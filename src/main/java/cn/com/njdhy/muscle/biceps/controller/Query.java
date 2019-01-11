@@ -22,11 +22,6 @@ public class Query extends LinkedHashMap<String, Object> {
      */
     private int pageSize;
 
-    /**
-     * 公司id
-     */
-    private int companyId;
-
     public Query(Map<String, Object> params) {
         if (params != null && params.size() != 0) {
             this.putAll(params);
@@ -50,11 +45,4 @@ public class Query extends LinkedHashMap<String, Object> {
         this.pageSize = limit;
     }
 
-    public int getCompanyId() {
-        return companyId;
-    }
-
-    public void setCompanyId(int companyId) {
-        this.companyId = companyId;
-    }
 }
