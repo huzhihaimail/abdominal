@@ -4,7 +4,6 @@ import cn.com.njdhy.muscle.biceps.controller.Query;
 import cn.com.njdhy.muscle.biceps.controller.Result;
 import cn.com.njdhy.muscle.biceps.exception.ApplicationException;
 import cn.com.njdhy.muscle.biceps.exception.srvc.VideoErrorCode;
-import cn.com.njdhy.muscle.biceps.model.SysUser;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcVideo;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcVideoService;
@@ -43,8 +42,7 @@ public class VideoCtl {
     public Result banner(@RequestParam Map<String, Object> params, Integer pageNumber, Integer pageSize) {
         PageInfo<SrvcVideo> result=null;
         try {
-            SysUser user = ShiroUtil.getUser();
-            params.put("companyId",user.getCompanyId());
+            params.put("companyId",ShiroUtil.getUserCompanyId());
             Query queryParam = new Query(params);
             result = srvcVideoService.queryList(queryParam, pageNumber, pageSize);
 
@@ -105,8 +103,7 @@ public class VideoCtl {
                 return Result.error(VideoErrorCode.SRVC_VIDEO_PARAMS_ERROR_CODE,VideoErrorCode.SRVC_VIDEO_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
-            SysUser user = ShiroUtil.getUser();
-            srvcVideo.setCompanyId(user.getCompanyId());
+            srvcVideo.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcVideoService.insert(srvcVideo);
         } catch (ApplicationException e) {
             e.printStackTrace();

@@ -33,4 +33,8 @@ public class SrvcGuide extends BaseModel {
      * 文章类型 1:企业新闻 2：装修科普
      */
     private Integer type;
+    /**
+     * 公司id
+     */
+    private Integer companyId;
 }

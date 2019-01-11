@@ -42,6 +42,10 @@ public class SrvcHouses extends BaseModel{
      */
     private String concept;
     /**
+     * 公司id
+     */
+    private Integer companyId;
+    /**
      * 首页显示图片
      */
     private String homePageImg;

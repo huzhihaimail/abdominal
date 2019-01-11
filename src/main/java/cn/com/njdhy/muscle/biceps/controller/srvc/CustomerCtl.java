@@ -3,10 +3,10 @@ package cn.com.njdhy.muscle.biceps.controller.srvc;
 import cn.com.njdhy.muscle.biceps.controller.Query;
 import cn.com.njdhy.muscle.biceps.controller.Result;
 import cn.com.njdhy.muscle.biceps.exception.ApplicationException;
-import cn.com.njdhy.muscle.biceps.exception.srvc.CompanyDescErrorCode;
 import cn.com.njdhy.muscle.biceps.exception.srvc.CustomerErrorCode;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcCustomer;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcCustomerService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -41,6 +41,7 @@ public class CustomerCtl {
 
         try {
             Query queryParam = new Query(params);
+            queryParam.put("companyId",ShiroUtil.getUserCompanyId());
             result = srvcCustomerService.queryList(queryParam, pageNumber, pageSize);
         }catch (Exception e){
             e.printStackTrace();
@@ -91,6 +92,7 @@ public class CustomerCtl {
                 return Result.error(CustomerErrorCode.SRVC_CUSTOMER_PARAMS_ERROR_CODE,CustomerErrorCode.SRVC_CUSTOMER_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
+            srvcCustomer.setCompanyid(ShiroUtil.getUserCompanyId());
             srvcCustomerService.insert(srvcCustomer);
         } catch (ApplicationException e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ import cn.com.njdhy.muscle.biceps.exception.srvc.GuideErrorCode;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcGuide;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcGuideService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -44,6 +45,7 @@ public class GuideCtl {
         PageInfo<SrvcGuide> result=null;
         try {
             Query queryParam = new Query(params);
+            queryParam.put("companyId",ShiroUtil.getUserCompanyId());
             result = srvcGuideService.queryList(queryParam, pageNumber, pageSize);
             List<SrvcGuide> list = result.getList();
             for (SrvcGuide srvcGuide : list) {
@@ -99,6 +101,7 @@ public class GuideCtl {
                 return Result.error(GuideErrorCode.SRVC_DECORATEGUIDE_PARAMS_ERROR_CODE,GuideErrorCode.SRVC_DECORATEGUIDE_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
+            srvcGuide.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcGuideService.insert(srvcGuide);
         } catch (ApplicationException e) {
             e.printStackTrace();

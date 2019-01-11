@@ -23,6 +23,7 @@
         <result property="area" column="area"></result>
         <result property="imageUrl" column="image_url"></result>
 
+        <result property="companyId" column="company_id"></result>
         <result property="deleteFlag" column="delete_flag"></result>
         <result property="createDate" column="create_date"></result>
         <result property="updateDate" column="update_date"></result>
@@ -44,12 +45,12 @@
 
     <!-- for insert columns -->
     <sql id="columns">
-        id,  head_url, `name`, `position`, introduce,  working_experience, style, create_date, update_date, delete_flag
+        id,  head_url, `name`, `position`, introduce,  working_experience, style, company_id, create_date, update_date, delete_flag
     </sql>
 
     <!-- for insert value -->
     <sql id="values">
-        #{id}, #{headUrl}, #{name}, #{position},#{introduce},#{workingExperience},#{style}, NOW(),NOW(), 0
+        #{id}, #{headUrl}, #{name}, #{position},#{introduce},#{workingExperience},#{style}, #{companyId}, NOW(),NOW(), 0
     </sql>
 
     <!-- for update set -->
@@ -78,6 +79,9 @@
         WHERE 1=1
         <if test="name !=null and name !='' ">
             AND t.name LIKE CONCAT('%',#{name},'%')
+        </if>
+        <if test="companyId !=null ">
+            AND t.company_id =#{companyId}
         </if>
 
     </select>
@@ -136,6 +140,9 @@
         WHERE 1=1
         <if test="keyword!=null and keyword!=''">
             AND `name` LIKE CONCAT('%',#{keyword},'%')
+        </if>
+        <if test="companyId !=null">
+            AND company_id =#{companyId}
         </if>
         ORDER BY
         create_date

@@ -1,7 +1,6 @@
 package cn.com.njdhy.muscle.biceps.model.srvc;
 
 import cn.com.njdhy.muscle.biceps.model.BaseModel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,6 +39,10 @@ public class SrvcDesigner extends BaseModel{
      * 设计风格
      */
     private String style;
+    /**
+     * 公司id
+     */
+    private Integer companyId;
 
 
     //以下是关联表的字段

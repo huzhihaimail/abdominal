@@ -9,6 +9,7 @@ import cn.com.njdhy.muscle.biceps.model.srvc.SrvcHouses;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcDesignerService;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcHousesService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -46,6 +47,7 @@ public class HousesCtl {
         PageInfo<SrvcHouses> result=null;
         try {
             Query queryParam = new Query(params);
+            queryParam.put("companyId",ShiroUtil.getUserCompanyId());
             result = srvcHousesService.selectHousesList(queryParam, pageNumber, pageSize);
             List<SrvcHouses> list = result.getList();
             for (SrvcHouses srvcHouses : list) {
@@ -102,6 +104,7 @@ public class HousesCtl {
                 return Result.error(HousesErrorCode.SRVC_HOUSES_PARAMS_ERROR_CODE,HousesErrorCode.SRVC_HOUSES_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
+            srvcHouses.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcHousesService.insert(srvcHouses);
         } catch (ApplicationException e) {
             e.printStackTrace();
@@ -178,6 +181,7 @@ public class HousesCtl {
     public Result queryDesigner(@RequestParam Map<String, Object> map) {
         List<SrvcDesigner> srvcDesigners = null;
         try {
+            map.put("companyId",ShiroUtil.getUserCompanyId());
             srvcDesigners = srvcDesignerService.queryDesigners(map);
         } catch (Exception e) {
             e.printStackTrace();

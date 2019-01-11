@@ -3,11 +3,11 @@ package cn.com.njdhy.muscle.biceps.controller.srvc;
 import cn.com.njdhy.muscle.biceps.controller.Query;
 import cn.com.njdhy.muscle.biceps.controller.Result;
 import cn.com.njdhy.muscle.biceps.exception.ApplicationException;
-import cn.com.njdhy.muscle.biceps.exception.srvc.CaseErrorCode;
 import cn.com.njdhy.muscle.biceps.exception.srvc.DesignerErrorCode;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcDesigner;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcDesignerService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -44,6 +44,7 @@ public class DesignerCtl {
         PageInfo<SrvcDesigner> result=null;
         try {
             Query queryParam = new Query(params);
+            queryParam.put("companyId",ShiroUtil.getUserCompanyId());
             result = srvcDesignerService.queryList(queryParam, pageNumber, pageSize);
             List<SrvcDesigner> list = result.getList();
             for(SrvcDesigner srvcDesigner: list) {
@@ -101,6 +102,7 @@ public class DesignerCtl {
                 return Result.error(DesignerErrorCode.SRVC_DESIGNER_PARAMS_ERROR_CODE,DesignerErrorCode.SRVC_DESIGNER_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
+            srvcDesigner.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcDesignerService.insert(srvcDesigner);
         } catch (ApplicationException e) {
             e.printStackTrace();

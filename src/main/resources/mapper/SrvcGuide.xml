@@ -13,6 +13,7 @@
         <result property="content" column="content"></result>
         <result property="imageUrl" column="image_url"></result>
         <result property="type" column="type"></result>
+        <result property="companyId" column="company_id"></result>
         <result property="deleteFlag" column="delete_flag"></result>
         <result property="createDate" column="create_date"></result>
         <result property="updateDate" column="update_date"></result>
@@ -25,12 +26,12 @@
 
     <!-- for insert columns -->
     <sql id="columns">
-        id, title, short_introduce, content, image_url, `type` ,create_date, update_date, delete_flag
+        id, title, short_introduce, content, image_url, `type` ,company_id,create_date, update_date, delete_flag
     </sql>
 
     <!-- for insert value -->
     <sql id="values">
-        #{id}, #{title}, #{shortIntroduce}, #{content}, #{imageUrl}, #{type}, NOW(), NOW(), 0
+        #{id}, #{title}, #{shortIntroduce}, #{content}, #{imageUrl}, #{type},#{companyId}, NOW(), NOW(), 0
     </sql>
 
     <!-- for update set -->
@@ -107,6 +108,9 @@
         </if>
         <if test="type != null ">
             AND `type` = #{type}
+        </if>
+        <if test="companyId !=null">
+            AND company_id =#{companyId}
         </if>
         ORDER BY
         create_date
