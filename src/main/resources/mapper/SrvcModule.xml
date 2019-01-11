@@ -14,6 +14,7 @@
         <result property="title" column="title"></result>
         <result property="imageUrl" column="image_url"></result>
         <result property="imageType" column="image_type"></result>
+        <result property="companyId" column="company_id"></result>
 
         <result property="deleteFlag" column="delete_flag"></result>
         <result property="createDate" column="create_date"></result>
@@ -136,6 +137,9 @@
         <where>
             <if test="keyword!=null and keyword!=''">
                 AND m.module_name LIKE CONCAT('%',#{keyword},'%')
+            </if>
+            <if test="companyId!=null">
+                AND s.company_id = #{companyId}
             </if>
         </where>
     </select>

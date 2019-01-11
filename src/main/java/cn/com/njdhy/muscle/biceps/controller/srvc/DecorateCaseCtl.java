@@ -11,6 +11,7 @@ import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcCaseImgService;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcDecorateCaseService;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcHousesService;
+import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,7 @@ public class DecorateCaseCtl {
     public Result banner(@RequestParam Map<String, Object> params, Integer pageNumber, Integer pageSize) {
         PageInfo<SrvcDecorateCase> result=null;
         try {
+            params.put("companyId",ShiroUtil.getUserCompanyId());
             Query queryParam = new Query(params);
             result = srvcDecorateCaseService.selectDecorateCaseList(queryParam, pageNumber, pageSize);
             List<SrvcDecorateCase> list = result.getList();
@@ -112,6 +114,7 @@ public class DecorateCaseCtl {
                 return Result.error(CaseErrorCode.SRVC_CASE_PARAMS_ERROR_CODE, CaseErrorCode.SRVC_CASE_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
+            srvcDecorateCase.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcDecorateCaseService.insert(srvcDecorateCase);
             SrvcCaseImg srvcCaseImg = new SrvcCaseImg();
             srvcCaseImg.setCaseId(srvcDecorateCase.getId());

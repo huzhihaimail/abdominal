@@ -12,6 +12,7 @@
         <result property="imageUrl" column="image_url"></result>
         <result property="imageType" column="image_type"></result>
         <result property="moduleId" column="module_id"></result>
+        <result property="companyId" column="cpmpany_id"></result>
         <result property="deleteFlag" column="delete_flag"></result>
         <result property="createDate" column="create_date"></result>
         <result property="updateDate" column="update_date"></result>
@@ -24,12 +25,12 @@
 
     <!-- for insert columns -->
     <sql id="columns">
-        id, title, image_url, image_type, module_id, create_date, update_date, delete_flag
+        id, title, image_url, image_type, module_id, company_id, create_date, update_date, delete_flag
     </sql>
 
     <!-- for insert value -->
     <sql id="values">
-        #{id}, #{title}, #{imageUrl}, #{imageType}, #{moduleId}, NOW(), NOW(), 0
+        #{id}, #{title}, #{imageUrl}, #{imageType}, #{moduleId}, #{companyId}, NOW(), NOW(), 0
     </sql>
 
     <!-- for update set -->

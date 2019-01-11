@@ -17,6 +17,7 @@
         <result property="style" column="style"></result>
         <result property="area" column="area"></result>
         <result property="homePageImg" column="home_page_img"></result>
+        <result property="companyId" column="company_id"></result>
 
         <result property="imgId" column="img_id"></result>
         <result property="imageUrl" column="image_url"></result>
@@ -40,12 +41,12 @@
 
     <!-- for insert columns -->
     <sql id="columns">
-        id, houses_id, progress, create_date, update_date, delete_flag
+        id, houses_id, progress, company_id, create_date, update_date, delete_flag
     </sql>
 
     <!-- for insert value -->
     <sql id="values">
-        #{id}, #{housesId}, #{progress}, NOW(),NOW(), 0
+        #{id}, #{housesId}, #{progress}, #{companyId}, NOW(),NOW(), 0
     </sql>
 
     <!-- for update set -->
@@ -148,6 +149,9 @@
             <if test="keyword!=null and keyword!=''">
                 AND b.progress =#{keyword}
                 OR h.name LIKE CONCAT('%',#{keyword},'%')
+            </if>
+            <if test="companyId!=null">
+                AND b.company_id =#{companyId}
             </if>
         </where>
     </select>

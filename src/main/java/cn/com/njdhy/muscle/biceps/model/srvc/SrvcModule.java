@@ -1,7 +1,6 @@
 package cn.com.njdhy.muscle.biceps.model.srvc;
 
 import cn.com.njdhy.muscle.biceps.model.BaseModel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -40,4 +39,6 @@ public class SrvcModule extends BaseModel{
      * 类型 1主图 2 辅图
      */
     private Integer imageType;
+
+    private int companyId;
 }
