@@ -72,6 +72,9 @@
         <if test="name!=null and name != ''">
             AND t.name=#{name}
         </if>
+        <if test="companyId!=null">
+            AND t.company_id=#{companyId}
+        </if>
 
     </select>
 
