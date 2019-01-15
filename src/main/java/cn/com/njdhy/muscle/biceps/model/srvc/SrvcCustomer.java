@@ -27,5 +27,5 @@ public class SrvcCustomer extends BaseModel{
     /**
      * 公司id
      */
-    private Integer companyid;
+    private Integer companyId;
 }

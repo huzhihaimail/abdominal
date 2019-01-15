@@ -92,7 +92,7 @@ public class CustomerCtl {
                 return Result.error(CustomerErrorCode.SRVC_CUSTOMER_PARAMS_ERROR_CODE,CustomerErrorCode.SRVC_CUSTOMER_PARAMS_ERROR_MESSAGE);
             }
             // 执行入库操作
-            srvcCustomer.setCompanyid(ShiroUtil.getUserCompanyId());
+            srvcCustomer.setCompanyId(ShiroUtil.getUserCompanyId());
             srvcCustomerService.insert(srvcCustomer);
         } catch (ApplicationException e) {
             e.printStackTrace();
