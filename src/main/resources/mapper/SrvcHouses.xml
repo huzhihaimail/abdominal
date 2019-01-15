@@ -151,7 +151,7 @@
                 AND h.name LIKE CONCAT('%',#{keyword},'%')
             </if>
             <if test="companyId !=null">
-                AND company_id =#{companyId}
+                AND h.company_id =#{companyId}
             </if>
         </where>
     </select>
