@@ -198,7 +198,7 @@ public class DecorateCaseCtl {
 
         List<SrvcHouses> houses =null;
         try {
-
+            map.put("companyId",ShiroUtil.getUserCompanyId());
             houses = srvcHousesService.queryHouses(map);
         } catch (Exception e) {
             e.printStackTrace();
