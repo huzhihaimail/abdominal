@@ -1,9 +1,9 @@
 package cn.com.njdhy.muscle.biceps.api;
 
 import cn.com.njdhy.muscle.biceps.controller.Result;
-import cn.com.njdhy.muscle.biceps.exception.srvc.CompanyDescErrorCode;
+import cn.com.njdhy.muscle.biceps.exception.srvc.FourModuleErrorCode;
 import cn.com.njdhy.muscle.biceps.model.srvc.*;
-import cn.com.njdhy.muscle.biceps.service.srvc.*;
+import cn.com.njdhy.muscle.biceps.service.srvc.SrvcFourModuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +21,11 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/api")
 @Slf4j
-@Api(tags = "三大模块接口")
-public class CompanyDescController {
+@Api(tags = "四大模块接口")
+public class FourModuleController {
 
     @Autowired
-    private SrvcCompanyDescService srvcCompanyDescService;
+    private SrvcFourModuleService srvcFourModuleService;
 
 
     /**
@@ -33,18 +33,18 @@ public class CompanyDescController {
      * @return
      */
     @RequestMapping(value = "/companys/{type}",method = RequestMethod.POST)
-    @ApiOperation("查询三大模块及图片列表")
+    @ApiOperation("查询四大模块及图片列表")
     public Result companyDescQuery(@PathVariable Integer type) {
-        List<SrvcCompanyDesc> list =null;
+        List<SrvcFourModule> list =null;
         try {
             if(type == null){
-                return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
+                return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
             }
-            list = srvcCompanyDescService.queryByType(type);
+            list = srvcFourModuleService.queryByType(type);
 
         }catch (Exception e){
             e.printStackTrace();
-            return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_CODE, CompanyDescErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_MESSAGE);
+            return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_CODE, FourModuleErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_MESSAGE);
         }
 
         return Result.success(list);

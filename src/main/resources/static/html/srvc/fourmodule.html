@@ -22,9 +22,8 @@
                 <div class="input-group">
                     <select class="form-control" v-model="vueQueryParam.keyword" @keyup.enter="query">
                         <option value="" selected>请选择模块类型</option>
-                        <option value="1">整屋装修</option>
-                        <option value="2">卓尔高端设计</option>
-                        <option value="3">房点装</option>
+                        <option value="1">弹窗</option>
+                        <option value="2">文章</option>
                     </select>
                     <span class="input-group-btn">
                             <button type="button" class="btn btn-primary" @click="query">
@@ -78,17 +77,23 @@
                     <div class="col-sm-6">
                         <select class="form-control" v-model="model.type">
                             <option value="" selected>请选择模块类型</option>
-                            <option value="1">整屋装修</option>
-                            <option value="2">卓尔高端设计</option>
-                            <option value="3">房点装</option>
+                            <option value="1">弹窗</option>
+                            <option value="2">文章</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-sm-3 control-label">模块标题<span class="text-danger">*</span></div>
+                    <div class="col-sm-3 control-label">大标题<span class="text-danger">*</span></div>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" v-model="model.title"
-                               placeholder="请输入模块标题"/>
+                        <input type="text" class="form-control" v-model="model.headTitle"
+                               placeholder="请输入大标题"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3 control-label">小标题<span class="text-danger">*</span></div>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" v-model="model.subTitle"
+                               placeholder="请输入小标题"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -108,6 +113,11 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <div class="col-sm-3 control-label">文章内容<span class="text-danger">*</span></div>
+                    <div  id="editor" style="height:550px;max-height:600px;width:800px;margin-left: 183px;"></div>
+                    <input type="hidden" name="content" v-model="model.content"/>
+                </div>
 
                 <div class="form-group text-center">
                     <a type="button" class="btn btn-success" @click="commit"><i class="fa fa-check-square-o"></i>&nbsp;确定</a>&nbsp;&nbsp;
@@ -138,7 +148,10 @@
 <script src="../../plugin/bootstrap-fileinput/js/fileinput.min.js"></script>
 <script src="../../plugin/bootstrap-fileinput/js/locales/zh.js"></script>
 
+<!--wangeditor-->
+<script type="text/javascript" src="../../plugin/wangeditor/wangEditor.js"></script>
+
 <!-- 业务js -->
-<script src="../../vue/srvc/companydesc.js"></script>
+<script src="../../vue/srvc/fourmodule.js"></script>
 
 </html>

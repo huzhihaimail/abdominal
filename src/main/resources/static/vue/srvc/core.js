@@ -16,45 +16,19 @@ var showColumns = [
     }
     , {
         field: "title",
-        title: "标题",
-        width: "10%",
-        visible: false
+        title: "文章标题",
+        width: "10%"
     }
     , {
-        field: "imageUrl",
-        title: "图片显示",
+        field: "images",
+        title: "标题图片",
         width: "20%",
         formatter:function (value,row,index) {
             var img  = '<img src="'+value+' " style="height: 100px;width: 200px" />'
             return img;
         }
     }
-    , {
-        field: "type",
-        title: "模块类型",
-        width: "15%",
-        formatter: function (value, row, index) { //显示模块类型 1.整屋装修 2.卓尔高端设计 等
-            var role = '';
-            switch (value){
-                case 1:
-                    role = '整屋装修'
-                    break;
-                case 2:
-                    role = '卓尔高端设计'
-                    break;
-                case 3:
-                    role = '房点装'
-                    break;
 
-            }
-            return role;
-        }
-    }
-    , {
-        field: "orderNum",
-        title: "排序号",
-        width: "10%",
-    }
     , {
         field: "createDate",
         title: "创建时间",
@@ -106,8 +80,9 @@ var vm = new Vue({
         }
         , model: {} //实体对象(用于新建、修改页面)
 
+        , VueEditor:{}
         // 定义模块名称
-        , moduleName: "/srvc/company/desc"
+        , moduleName: "/srvc/core"
     }
     // 定义方法
     , methods: {
@@ -130,15 +105,17 @@ var vm = new Vue({
             //加载文件上传组件
             vm.loadFileInput();
             vm.RemoveImageShow();
+
+            vm.wangEditor();
+            vm.VueEditor.txt.clear();
         }
 
         // 点击“确定”按钮
         , commit: function (el) {
 
-            // todo 校验新增时提交参数
-
             // 执行新增操作
             if (vm.model.id == null) {
+
                 vm.doSave();
                 return;
             }
@@ -149,6 +126,8 @@ var vm = new Vue({
 
         // 执行保存操作
         , doSave: function () {
+
+            vm.getWangEditor();
 
             // 2. 入库
             $.ajax({
@@ -177,7 +156,7 @@ var vm = new Vue({
             vm.RemoveImageShow();
             // 隐藏密码框
             vm.errorMessage = null;
-
+            vm.wangEditor();
             // 获取所选择选择数据行的ID（可能选择多行）
             var ids = bsTable.getMultiRowIds();
 
@@ -186,17 +165,18 @@ var vm = new Vue({
                 alert(PAGE_SELECT_ONE);
                 return;
             }
-
             $.get(APP_NAME + vm.moduleName + "/" + ids[0], function (r) {
                 vm.show = false;
                 vm.title = PAGE_UPDATE_TITLE;
                 vm.model = r.model;
+                vm.VueEditor.txt.html(vm.model.content);
             });
+
         }
 
         // 执行修改操作
         , doUpdate: function () {
-
+            vm.getWangEditor();
             // 执行修改
             $.ajax({
                 type: "POST",
@@ -252,6 +232,7 @@ var vm = new Vue({
 
         // 重新加载(ok)
         , reload: function () {
+
             // 展示查询列表
             vm.show = true;
             // 查询条件
@@ -261,6 +242,47 @@ var vm = new Vue({
             vm.queryOption = queryOpt;
             // 刷新表格数据
             bsTable.createBootStrapTable(showColumns, APP_NAME + vm.moduleName + "/list?rnd=" + Math.random(), vm.queryOption);
+        }
+        // 加载富文本编辑器
+        ,wangEditor:function () {
+            var E = window.wangEditor;
+            var editor = new E('#editor')
+
+            editor.customConfig.uploadFileName = 'file'
+            editor.customConfig.uploadImgServer = '/wangEditor/upload';
+            // 将图片大小限制为 3M
+            editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
+            // 限制一次最多上传 1 张图片
+            editor.customConfig.uploadImgMaxLength = 1;
+            // editor.customConfig.zIndex = 100000;
+            editor.customConfig.showLinkImg = false;
+            //自定义上传图片事件
+            editor.customConfig.uploadImgHooks = {
+                before : function(xhr, editor, files) {
+                    console.log("before");
+                },
+                success : function(xhr, editor, result) {
+
+                    console.log("上传成功");
+
+                },
+                fail : function(xhr, editor, result) {
+                    console.log("上传失败,原因是"+result);
+                },
+                error : function(xhr, editor) {
+                    console.log("上传出错");
+                },
+                timeout : function(xhr, editor) {
+                    console.log("上传超时");
+                }
+            }
+
+            editor.create();
+
+            vm.VueEditor = editor;
+        }
+        ,getWangEditor:function () {
+            vm.model.content = vm.VueEditor.txt.html();
         }
 
         // 加载文件上传组件
@@ -330,7 +352,7 @@ $("#input-id").on("fileuploaded", function (event, data, previewId, index) {
     var response = data.response;
     var path = response.data.path;
     //返回上传的图片地址，赋值给vm model
-    vm.model.imageUrl=path;
+    vm.model.images=path;
 
 });
 

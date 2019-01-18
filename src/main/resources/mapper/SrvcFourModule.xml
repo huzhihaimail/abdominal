@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 配置dao接口路径-->
+<mapper namespace="cn.com.njdhy.muscle.biceps.dao.srvc.SrvcFourModuleDao">
+
+    <!-- type配置model层实体类名-->
+    <resultMap id="SrvcFourModuleMap" type="SrvcFourModule">
+        <!-- 配置实体和数据库列的对应关系，property：实体属性名；column：数据库表列名；-->
+        <result property="id" column="id"></result>
+        <result property="headTitle" column="head_title"></result>
+        <result property="subTitle" column="sub_title"></result>
+        <result property="imageUrl" column="image_url"></result>
+        <result property="type" column="type"></result>
+        <result property="content" column="content"></result>
+        <result property="companyId" column="company_id"></result>
+        <result property="orderNum" column="order_num"></result>
+        <result property="deleteFlag" column="delete_flag"></result>
+        <result property="createDate" column="create_date"></result>
+        <result property="updateDate" column="update_date"></result>
+    </resultMap>
+
+    <!-- 配置表名 -->
+    <sql id="tableName">
+        srvc_four_module
+    </sql>
+
+    <!-- for insert columns -->
+    <sql id="columns">
+        id, head_title,sub_title, image_url, content, `type`, order_num, company_id, create_date, update_date, delete_flag
+    </sql>
+
+    <!-- for insert value -->
+    <sql id="values">
+        #{id}, #{headTitle},#{subTitle}, #{imageUrl}, #{content}, #{type}, #{orderNum}, #{companyId}, NOW(), NOW(), 0
+    </sql>
+
+    <!-- for update set -->
+    <sql id="updates">
+        head_title=#{headTitle},sub_title=#{subTitle}, image_url=#{imageUrl}, content=#{content}, `type`=#{type}, order_num=#{orderNum},update_date=NOW(), delete_flag=#{deleteFlag}
+    </sql>
+
+    <!-- 根据名称查询 -->
+    <select id="queryByName" resultMap="SrvcFourModuleMap" parameterType="String">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tableName"/>
+        t
+        WHERE 1=1
+        AND t.head_title=#{headTitle}
+
+    </select>
+
+    <!-- 根据ID查询-->
+    <select id="queryById" resultMap="SrvcFourModuleMap" parameterType="String">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE 1 = 1
+        AND id=#{id}
+    </select>
+
+    <!--api 根据type查询-->
+    <select id="queryByType" resultMap="SrvcFourModuleMap" parameterType="Integer">
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE 1 = 1
+        AND type=#{type}
+        ORDER BY order_num
+    </select>
+
+    <!-- 批量删除-->
+    <delete id="deleteByIds" parameterType="java.util.List">
+        DELETE FROM
+        <include refid="tableName"/>
+        WHERE 1=1
+        AND id IN
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 新建  useGeneratedKeys="true" 用于返回新增后的id值-->
+    <insert id="insert" parameterType="SrvcFourModule" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="tableName"/>
+        (<include refid="columns"/>)
+        VALUES
+        (<include refid="values"/>)
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="SrvcFourModule">
+        UPDATE
+        <include refid="tableName"/>
+        SET
+        <include refid="updates"/>
+        WHERE 1=1
+        AND id = #{id}
+    </update>
+
+    <!-- 根据条件查询 -->
+    <select id="queryList" resultMap="SrvcFourModuleMap" parameterType="map">
+
+        SELECT
+        <include refid="columns"/>
+        FROM
+        (
+        SELECT
+        <include refid="columns"/>
+        FROM
+        <include refid="tableName"/>
+        WHERE 1=1
+        <if test="keyword!=null and keyword!=''">
+            AND  `type` LIKE CONCAT('%',#{keyword},'%')
+        </if>
+        <if test="companyId!=null">
+            AND  company_id = #{companyId}
+        </if>
+        ORDER BY
+        create_date
+        DESC
+        ) t
+    </select>
+
+
+</mapper>
+

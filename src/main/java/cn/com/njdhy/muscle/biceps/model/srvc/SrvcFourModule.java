@@ -11,12 +11,16 @@ import lombok.Setter;
  **/
 @Getter
 @Setter
-public class SrvcCompanyDesc extends BaseModel{
+public class SrvcFourModule extends BaseModel{
 
     /**
      * 模块标题
      */
-    private String title;
+    private String headTitle;
+    /**
+     * 小标题
+     */
+    private String subTitle;
 
     /**
      * 模块图片地址
@@ -24,14 +28,18 @@ public class SrvcCompanyDesc extends BaseModel{
     private String imageUrl;
 
     /**
-     * 内容
+     * 模块类型：1、弹窗     2、文章
      */
     private Integer type;
+    /**
+     * 内容
+     */
+    private String content;
 
     /**
      * 图片排序
      */
     private Integer orderNum;
 
-    private int companyId;
+    private Integer companyId;
 }

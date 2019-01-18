@@ -160,7 +160,7 @@ var vm = new Vue({
             }
 
             // 校验表单菜单名称
-            if (vm.model.name.trim() == null || vm.model.name.trim() == "") {
+            if (!vm.model.name || vm.model.name.trim() == "") {
                 vm.errorMessage = "请输入菜单名称！";
                 return;
             }

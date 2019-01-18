@@ -15,13 +15,20 @@ var showColumns = [
         }
     }
     , {
-        field: "title",
-        title: "文章标题",
-        width: "10%"
+        field: "headTitle",
+        title: "大标题",
+        width: "10%",
+        visible: false
+    }
+    , {
+        field: "subTitle",
+        title: "小标题",
+        width: "10%",
+        visible: false
     }
     , {
         field: "imageUrl",
-        title: "标题图片",
+        title: "图片显示",
         width: "20%",
         formatter:function (value,row,index) {
             var img  = '<img src="'+value+' " style="height: 100px;width: 200px" />'
@@ -30,20 +37,26 @@ var showColumns = [
     }
     , {
         field: "type",
-        title: "文章类型",
-        width: "10%",
-        formatter: function (value, row, index) { //显示文章类型 1.企业新闻 2.装修科普
+        title: "模块类型",
+        width: "15%",
+        formatter: function (value, row, index) { //显示模块类型 1.整屋装修 2.卓尔高端设计 等
             var role = '';
             switch (value){
                 case 1:
-                    role = '企业新闻'
+                    role = '弹窗'
                     break;
                 case 2:
-                    role = '装修科普'
+                    role = '文章'
                     break;
+
             }
             return role;
         }
+    }
+    , {
+        field: "orderNum",
+        title: "排序号",
+        width: "10%",
     }
     , {
         field: "createDate",
@@ -95,10 +108,10 @@ var vm = new Vue({
             keyword: null,
         }
         , model: {} //实体对象(用于新建、修改页面)
-        // ,content:{}
         , VueEditor:{}
+
         // 定义模块名称
-        , moduleName: "/srvc/decorate/guide"
+        , moduleName: "/srvc/four/module"
     }
     // 定义方法
     , methods: {
@@ -180,13 +193,13 @@ var vm = new Vue({
                 alert(PAGE_SELECT_ONE);
                 return;
             }
+
             $.get(APP_NAME + vm.moduleName + "/" + ids[0], function (r) {
                 vm.show = false;
                 vm.title = PAGE_UPDATE_TITLE;
                 vm.model = r.model;
                 vm.VueEditor.txt.html(vm.model.content);
             });
-
         }
 
         // 执行修改操作
@@ -247,7 +260,6 @@ var vm = new Vue({
 
         // 重新加载(ok)
         , reload: function () {
-
             // 展示查询列表
             vm.show = true;
             // 查询条件
@@ -258,6 +270,7 @@ var vm = new Vue({
             // 刷新表格数据
             bsTable.createBootStrapTable(showColumns, APP_NAME + vm.moduleName + "/list?rnd=" + Math.random(), vm.queryOption);
         }
+
         // 加载富文本编辑器
         ,wangEditor:function () {
             var E = window.wangEditor;

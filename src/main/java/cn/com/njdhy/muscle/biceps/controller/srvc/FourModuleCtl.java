@@ -3,12 +3,13 @@ package cn.com.njdhy.muscle.biceps.controller.srvc;
 import cn.com.njdhy.muscle.biceps.controller.Query;
 import cn.com.njdhy.muscle.biceps.controller.Result;
 import cn.com.njdhy.muscle.biceps.exception.ApplicationException;
-import cn.com.njdhy.muscle.biceps.exception.srvc.CompanyDescErrorCode;
-import cn.com.njdhy.muscle.biceps.model.srvc.SrvcCompanyDesc;
+import cn.com.njdhy.muscle.biceps.exception.srvc.FourModuleErrorCode;
+import cn.com.njdhy.muscle.biceps.model.srvc.SrvcFourModule;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
-import cn.com.njdhy.muscle.biceps.service.srvc.SrvcCompanyDescService;
+import cn.com.njdhy.muscle.biceps.service.srvc.SrvcFourModuleService;
 import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -23,13 +24,14 @@ import java.util.Map;
  * @date 2018/11/17 22:18
  **/
 @RestController
-@RequestMapping("/srvc/company/desc")
-public class CompanyDescCtl {
+@RequestMapping("/srvc/four/module")
+@Log4j2
+public class FourModuleCtl {
 
     @Autowired
     private AppCommonProperties appCommonProperties;
     @Autowired
-    private SrvcCompanyDescService srvcCompanyDescService;
+    private SrvcFourModuleService srvcFourModuleService;
 
     /**
      * 查询三大模块列表
@@ -41,20 +43,20 @@ public class CompanyDescCtl {
      */
     @RequestMapping("/list")
     public Result banner(@RequestParam Map<String, Object> params, Integer pageNumber, Integer pageSize) {
-        PageInfo<SrvcCompanyDesc> result=null;
+        PageInfo<SrvcFourModule> result=null;
         try {
             params.put("companyId",ShiroUtil.getUserCompanyId());
             Query queryParam = new Query(params);
-            result = srvcCompanyDescService.queryList(queryParam, pageNumber, pageSize);
-            List<SrvcCompanyDesc> list = result.getList();
-            for (SrvcCompanyDesc srvcCompanyDesc : list) {
-                String imgUrl = appCommonProperties.getImagesPrefix() + srvcCompanyDesc.getImageUrl();
-                srvcCompanyDesc.setImageUrl(imgUrl);
+            result = srvcFourModuleService.queryList(queryParam, pageNumber, pageSize);
+            List<SrvcFourModule> list = result.getList();
+            for (SrvcFourModule srvcFourModule : list) {
+                String imgUrl = appCommonProperties.getImagesPrefix() + srvcFourModule.getImageUrl();
+                srvcFourModule.setImageUrl(imgUrl);
             }
             result.setList(list);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_CODE,CompanyDescErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_MESSAGE);
+            return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_CODE,FourModuleErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_MESSAGE);
         }
 
         return Result.success(result.getTotal(), result.getList());
@@ -68,18 +70,18 @@ public class CompanyDescCtl {
      */
     @RequestMapping("/{id}")
     public Result queryById(@PathVariable String id) {
-        SrvcCompanyDesc model=null;
+        SrvcFourModule model=null;
         try {
             if (id==null){
-                return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
+                return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
             }
-            model = srvcCompanyDescService.queryById(id);
+            model = srvcFourModuleService.queryById(id);
             if (ObjectUtils.isEmpty(model)) {
-                model = new SrvcCompanyDesc();
+                model = new SrvcFourModule();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_CODE,CompanyDescErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_MESSAGE);
+            return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_CODE,FourModuleErrorCode.SRVC_COMPANYDESC_SELECT_ERROR_MESSAGE);
         }
 
         return Result.success().put("model", model);
@@ -89,25 +91,22 @@ public class CompanyDescCtl {
     /**
      * 保存
      *
-     * @param srvcCompanyDesc 请求数据对象
+     * @param srvcFourModule 请求数据对象
      * @return 结果对象
      */
     @RequestMapping("/insert")
-    public Result insert(@RequestBody SrvcCompanyDesc srvcCompanyDesc) {
+    public Result insert(@RequestBody SrvcFourModule srvcFourModule) {
 
         try {
-            if(null == srvcCompanyDesc){
-                return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
-            }
             // 执行入库操作
-            srvcCompanyDesc.setCompanyId(ShiroUtil.getUserCompanyId());
-            srvcCompanyDescService.insert(srvcCompanyDesc);
+            srvcFourModule.setCompanyId(ShiroUtil.getUserCompanyId());
+            srvcFourModuleService.insert(srvcFourModule);
         } catch (ApplicationException e) {
             e.printStackTrace();
-            return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_SAVE_APP_ERROR_CODE, CompanyDescErrorCode.SRVC_COMPANYDESC_SAVE_APP_ERROR_MESSAGE);
+            return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_SAVE_APP_ERROR_CODE, FourModuleErrorCode.SRVC_COMPANYDESC_SAVE_APP_ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_SAVE_ERROR_CODE, CompanyDescErrorCode.SRVC_COMPANYDESC_SAVE_ERROR_MESSAGE);
+            return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_SAVE_ERROR_CODE, FourModuleErrorCode.SRVC_COMPANYDESC_SAVE_ERROR_MESSAGE);
         }
 
         return Result.success();
@@ -116,25 +115,25 @@ public class CompanyDescCtl {
     /**
      * 修改操作
      *
-     * @param srvcCompanyDesc 请求数据对象
+     * @param srvcFourModule 请求数据对象
      * @return 结果对象
      */
     @RequestMapping("/update")
-    public Result update(@RequestBody SrvcCompanyDesc srvcCompanyDesc) {
+    public Result update(@RequestBody SrvcFourModule srvcFourModule) {
 
         try {
             // 校验参数
-            if(null == srvcCompanyDesc){
-                return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
+            if(null == srvcFourModule){
+                return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
             }
             // 执行修改
-            srvcCompanyDescService.update(srvcCompanyDesc);
+            srvcFourModuleService.update(srvcFourModule);
         } catch (RuntimeException e) {
             e.printStackTrace();
-            return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_UPDATE_APP_ERROR_CODE, CompanyDescErrorCode.SRVC_COMPANYDESC_UPDATE_APP_ERROR_MESSAGE);
+            return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_UPDATE_APP_ERROR_CODE, FourModuleErrorCode.SRVC_COMPANYDESC_UPDATE_APP_ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_UPDATE_ERROR_CODE, CompanyDescErrorCode.SRVC_COMPANYDESC_UPDATE_ERROR_MESSAGE);
+            return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_UPDATE_ERROR_CODE, FourModuleErrorCode.SRVC_COMPANYDESC_UPDATE_ERROR_MESSAGE);
         }
 
         return Result.success();
@@ -152,10 +151,10 @@ public class CompanyDescCtl {
         try {
             for (String id : ids) {
                 if (id == null || id.length() <= 0) {
-                    return Result.error(CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE, CompanyDescErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
+                    return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE, FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
                 }
             }
-            srvcCompanyDescService.deleteByIds(ids);
+            srvcFourModuleService.deleteByIds(ids);
         } catch (ApplicationException e) {
             e.printStackTrace();
             return Result.error(e.getCode(), e.getMsg());
