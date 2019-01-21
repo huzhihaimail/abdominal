@@ -72,26 +72,8 @@
                 <div class="form-group">
                     <div class="col-sm-3 control-label">模块名称<span class="text-danger">*</span></div>
                     <div class="col-sm-6">
-                        <select class="form-control" v-model="model.moduleId">
-                            <option value="" selected>请选择模块名</option>
-                            <option value="1">全屋装修</option>
-                            <option value="2">别墅大宅</option>
-                            <option value="3">商业办公</option>
-                            <option value="4">软配升级</option>
-                            <option value="5">水电冷暖</option>
-                            <option value="6">老房翻新</option>
-                            <option value="7">厨卫改造</option>
-                            <option value="8">全屋木作</option>
-                            <option value="9">阳台门窗</option>
-                            <option value="10">定制设计</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-3 control-label">图片标题<span class="text-danger">*</span></div>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" v-model="model.title"
-                               placeholder="请输入图片标题"/>
+                        <input type="text" class="form-control" v-model="model.moduleName"
+                               placeholder="请输入模块名称"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -105,14 +87,11 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="col-sm-3 control-label">图片类型<span class="text-danger">*</span></div>
-                    <div class="col-sm-6">
-                        <select class="form-control" v-model="model.imageType">
-                            <option value="1">主图</option>
-                            <option value="2">辅图</option>
-                        </select>
-                    </div>
+                    <div class="col-sm-3 control-label">模块内容<span class="text-danger">*</span></div>
+                    <div  id="editor" style="height:550px;max-height:600px;width:800px;margin-left: 183px;"></div>
+                    <input type="hidden" name="content" v-model="model.content"/>
                 </div>
+
                 <div class="form-group text-center">
                     <a type="button" class="btn btn-success" @click="commit"><i class="fa fa-check-square-o"></i>&nbsp;确定</a>&nbsp;&nbsp;
                     <a type="button" class="btn btn-warning" @click="reload"><i class="fa fa-undo"></i>&nbsp;返回</a>
@@ -142,7 +121,8 @@
 <script src="../../plugin/bootstrap-fileinput/js/fileinput.min.js"></script>
 <script src="../../plugin/bootstrap-fileinput/js/locales/zh.js"></script>
 
-
+<!--wangeditor-->
+<script type="text/javascript" src="../../plugin/wangeditor/wangEditor.js"></script>
 
 
 <!-- 业务js -->

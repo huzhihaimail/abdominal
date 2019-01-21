@@ -62,14 +62,13 @@
         AND id=#{id}
     </select>
 
-    <!--api 根据type查询-->
-    <select id="queryByType" resultMap="SrvcFourModuleMap" parameterType="Integer">
+    <!--api 根据公司id查询-->
+    <select id="queryByCompanyId" resultMap="SrvcFourModuleMap" parameterType="Integer">
         SELECT
         <include refid="columns"/>
         FROM
         <include refid="tableName"/>
-        WHERE 1 = 1
-        AND type=#{type}
+        WHERE company_id =#{companyId}
         ORDER BY order_num
     </select>
 

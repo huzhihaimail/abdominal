@@ -5,10 +5,8 @@ import cn.com.njdhy.muscle.biceps.controller.Result;
 import cn.com.njdhy.muscle.biceps.exception.ApplicationException;
 import cn.com.njdhy.muscle.biceps.exception.srvc.ModuleErrorCode;
 import cn.com.njdhy.muscle.biceps.model.srvc.SrvcModule;
-import cn.com.njdhy.muscle.biceps.model.srvc.SrvcModuleSub;
 import cn.com.njdhy.muscle.biceps.properties.AppCommonProperties;
 import cn.com.njdhy.muscle.biceps.service.srvc.SrvcModuleService;
-import cn.com.njdhy.muscle.biceps.service.srvc.SrvcModuleSubService;
 import cn.com.njdhy.muscle.biceps.util.ShiroUtil;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +30,6 @@ public class ModuleCtl {
     private AppCommonProperties appCommonProperties;
     @Autowired
     private SrvcModuleService srvcModuleService;
-    @Autowired
-    private SrvcModuleSubService srvcModuleSubService;
 
 
     /**
@@ -50,7 +46,7 @@ public class ModuleCtl {
         try {
             params.put("companyId",ShiroUtil.getUserCompanyId());
             Query queryParam = new Query(params);
-            result = srvcModuleService.selectModuleList(queryParam, pageNumber, pageSize);
+            result = srvcModuleService.queryList(queryParam, pageNumber, pageSize);
             List<SrvcModule> list = result.getList();
             for (SrvcModule srvcModule : list) {
                 String image = appCommonProperties.getImagesPrefix() +srvcModule.getImageUrl();
@@ -102,15 +98,8 @@ public class ModuleCtl {
     public Result insert(@RequestBody SrvcModule srvcModule) {
 
         try {
-
-            // 执行入库操作
-            SrvcModuleSub srvcModuleSub = new SrvcModuleSub();
-            srvcModuleSub.setTitle(srvcModule.getTitle());
-            srvcModuleSub.setImageUrl(srvcModule.getImageUrl());
-            srvcModuleSub.setImageType(srvcModule.getImageType());
-            srvcModuleSub.setModuleId(srvcModule.getModuleId());
-            srvcModuleSub.setCompanyId(ShiroUtil.getUserCompanyId());
-            srvcModuleSubService.insert(srvcModuleSub);
+            srvcModule.setCompanyId(ShiroUtil.getUserCompanyId());
+            srvcModuleService.insert(srvcModule);
         } catch (ApplicationException e) {
             e.printStackTrace();
             return Result.error(ModuleErrorCode.SRVC_MODULE_SAVE_APP_ERROR_CODE, ModuleErrorCode.SRVC_MODULE_SAVE_APP_ERROR_MESSAGE);
@@ -134,12 +123,7 @@ public class ModuleCtl {
 
         try {
 
-            SrvcModuleSub srvcModuleSub = new SrvcModuleSub();
-            srvcModuleSub.setTitle(srvcModule.getTitle());
-            srvcModuleSub.setImageUrl(srvcModule.getImageUrl());
-            srvcModuleSub.setImageType(srvcModule.getImageType());
-            srvcModuleSub.setId(srvcModule.getModuleSubId());
-            srvcModuleSubService.update(srvcModuleSub);
+            srvcModuleService.update(srvcModule);
         } catch (RuntimeException e) {
             e.printStackTrace();
             return Result.error(ModuleErrorCode.SRVC_MODULE_UPDATE_APP_ERROR_CODE, ModuleErrorCode.SRVC_MODULE_UPDATE_APP_ERROR_MESSAGE);

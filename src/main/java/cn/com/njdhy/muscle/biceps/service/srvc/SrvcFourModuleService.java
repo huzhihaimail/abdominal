@@ -15,8 +15,8 @@ public interface SrvcFourModuleService extends BaseService<SrvcFourModule> {
     /**
      * 根据模块类型查询
      *
-     * @param type
+     * @param companyId
      * @return
      */
-    List<SrvcFourModule> queryByType(Integer type);
+    List<SrvcFourModule> queryByCompanyId(Integer companyId);
 }

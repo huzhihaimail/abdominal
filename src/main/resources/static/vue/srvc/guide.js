@@ -184,6 +184,7 @@ var vm = new Vue({
                 vm.show = false;
                 vm.title = PAGE_UPDATE_TITLE;
                 vm.model = r.model;
+
                 vm.VueEditor.txt.html(vm.model.content);
             });
 

@@ -2,8 +2,8 @@ package cn.com.njdhy.muscle.biceps.api;
 
 import cn.com.njdhy.muscle.biceps.controller.Result;
 import cn.com.njdhy.muscle.biceps.exception.srvc.ModuleErrorCode;
-import cn.com.njdhy.muscle.biceps.model.srvc.*;
-import cn.com.njdhy.muscle.biceps.service.srvc.*;
+import cn.com.njdhy.muscle.biceps.model.srvc.SrvcModule;
+import cn.com.njdhy.muscle.biceps.service.srvc.SrvcModuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class ModuleController {
      */
     @RequestMapping(value = "/modules",method = RequestMethod.POST)
     @ApiOperation("查询首页十大模块列表")
-    public Result moduleQuery(@RequestParam String moduleName,Integer imageType) {
+    public Result moduleQuery(@RequestParam String moduleName, Integer imageType) {
         List<SrvcModule> list =null;
         try {
             if(moduleName == null || moduleName.length()<=0){

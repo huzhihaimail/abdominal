@@ -20,7 +20,7 @@ public class SrvcFourModuleServiceImpl extends BaseServiceImpl<SrvcFourModuleDao
     private SrvcFourModuleDao srvcFourModuleDao;
 
     @Override
-    public List<SrvcFourModule> queryByType(Integer type) {
-        return srvcFourModuleDao.queryByType(type);
+    public List<SrvcFourModule> queryByCompanyId(Integer companyId) {
+        return srvcFourModuleDao.queryByCompanyId(companyId);
     }
 }

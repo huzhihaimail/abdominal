@@ -29,18 +29,18 @@ public class FourModuleController {
 
 
     /**
-     * 查询三大模块信息列表
+     * 查询四大模块信息列表
      * @return
      */
-    @RequestMapping(value = "/companys/{type}",method = RequestMethod.POST)
+    @RequestMapping(value = "/four/module/{companyId}",method = RequestMethod.POST)
     @ApiOperation("查询四大模块及图片列表")
-    public Result companyDescQuery(@PathVariable Integer type) {
+    public Result companyDescQuery(@PathVariable Integer companyId) {
         List<SrvcFourModule> list =null;
         try {
-            if(type == null){
+            if(companyId == null){
                 return Result.error(FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_CODE,FourModuleErrorCode.SRVC_COMPANYDESC_PARAMS_ERROR_MESSAGE);
             }
-            list = srvcFourModuleService.queryByType(type);
+            list = srvcFourModuleService.queryByCompanyId(companyId);
 
         }catch (Exception e){
             e.printStackTrace();
